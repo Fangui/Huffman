@@ -2,7 +2,8 @@
 # define _HASH_TABLE_H_
  
 # include <stdint.h>
-# include "vector.h"
+# include <stdio.h>
+# include <stdlib.h>
  
 struct pair {
   uint32_t             hkey;

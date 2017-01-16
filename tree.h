@@ -8,10 +8,10 @@ struct tree
   struct tree *left, *right;
   char key;
   int value;
-}
+};
 
 struct tree *newTree();
 
-
+void printTree(struct tree *tree);
 
 # endif /* _TREE_HTABLE_H */

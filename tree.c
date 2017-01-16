@@ -5,11 +5,16 @@ struct tree *newTree()
   struct tree *tree = malloc(sizeof(struct tree));
   tree->left = NULL;
   tree->right = NULL;
+  return tree;
 }
 
-struct tree *vectToTree(struct vector *vect)
+void printTree(struct tree *tree)
 {
-  struct tree *tree = newTree();
-  
-
+  if(tree)
+  {
+    printf("key->%c, value->%d\n", tree->key, tree->value);
+    printTree(tree->left);
+    printTree(tree->right);
+  }
 }
+
