@@ -7,4 +7,9 @@ struct tree *newTree()
   tree->right = NULL;
 }
 
+struct tree *vectToTree(struct vector *vect)
+{
+  struct tree *tree = newTree();
+  
 
+}

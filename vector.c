@@ -33,11 +33,11 @@ void vector_push(struct vector *vect, struct Tuple *tup)
   double_vector_size(vect);
 
   size_t i = 0;
-  while(i < vect->size && vect->data[i]->t2 >= tup->t2)
+  while(i < vect->size && tup->t2 <= vect->data[i]->t2)
     ++i;
 
-  for(size_t j = i; j < vect->size; ++j)
-    vect->data[j + 1] = vect->data[j];
+  for(size_t j = vect->size; j > i; --j)
+    vect->data[j] = vect->data[j - 1];
 
   vect->data[i] = tup;
   ++(vect->size);

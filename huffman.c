@@ -1,6 +1,6 @@
 # include "huffman.h"
 
-struct vector *buildFrequencyList(char *data)
+struct vector *buildFrequency(char *data)
 {
   struct vector *vect = vector_make(100);
   struct htable *htab = create_htable(8);
@@ -13,7 +13,7 @@ struct vector *buildFrequencyList(char *data)
     if(pair)
       ++pair->value;
     else
-      add_htable(htab, *data, 0);
+      add_htable(htab, *data, 1);
     ++data;
   }
 
@@ -34,9 +34,10 @@ struct vector *buildFrequencyList(char *data)
 }
 
 
+
 int main()
 {
-  struct vector *vect = buildFrequencyList("bbaabtttaabtctce");
+  struct vector *vect = buildFrequency("bbaabtttaabtctce");
   printVect(vect);
   return 0;
 }
