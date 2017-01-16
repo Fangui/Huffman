@@ -19,13 +19,13 @@ struct htable {
 uint32_t hash(char data);
  
 struct htable *create_htable(size_t capacity);
- 
+
 struct pair *access_htable(struct htable *htable, char key);
  
-int add_htable(struct htable *htable, char key, int value);
- 
+void add_htable(struct htable *htable, char key, int value);
+
 void remove_htable(struct htable *htable, char key);
- 
+
 void clear_htable(struct htable *htable);
  
 # endif /* _HASH_TABLE_H_ */

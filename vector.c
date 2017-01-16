@@ -1,6 +1,6 @@
 # include "vector.h"
 
-void print_vect(struct vector *vect)
+void printVect(struct vector *vect)
 {
   for(size_t i = 0 ; i < vect->size; ++i)
     printf("t1->%c | t2->%d\n",vect->data[i]->t1, vect->data[i]->t2);
@@ -26,7 +26,7 @@ struct vector* vector_make(size_t capacity)
   vect->size = 0;
   vect->data = malloc(sizeof(struct Tuple) * capacity);
   return vect;
-
+}
 
 void vector_push(struct vector *vect, struct Tuple *tup)
 {
@@ -36,9 +36,10 @@ void vector_push(struct vector *vect, struct Tuple *tup)
   while(i < vect->size && vect->data[i]->t2 >= tup->t2)
     ++i;
 
-  for(; i < vect->size; ++i)
-    vect->data[i + 1] = vect->data[i];
+  for(size_t j = i; j < vect->size; ++j)
+    vect->data[j + 1] = vect->data[j];
 
+  vect->data[i] = tup;
   ++(vect->size);
 }
 

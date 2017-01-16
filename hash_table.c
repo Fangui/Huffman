@@ -37,12 +37,8 @@ struct pair *access_htable(struct htable *htable, char key)
   return pair;
 }
 
-int add_htable(struct htable *htable, char key, int value)
+void add_htable(struct htable *htable, char key, int value)
 {
-  struct pair *hclone = access_htable(htable, key);
-  if(hclone)
-    return 0;
-
    uint32_t h = 0;
    uint32_t index = 0;
 
@@ -87,7 +83,6 @@ int add_htable(struct htable *htable, char key, int value)
   insert->next = htable->tab[index];
   htable->tab[index] = insert;
   ++(htable->size);
-  return 1;
 }  
 
 void remove_htable(struct htable *htable, char key)

@@ -1,17 +1,17 @@
 CC=gcc
 CPPFLAGS=
-CFLAGS= -Wall -Wextra -std=c99 -O3 -o Hex
+CFLAGS= -Wall -Wextra -std=c99 -g -o huffman
 LDFLAGS=
 LDLIBS=
  
-SRC= Hex.c matrix.c tree.c vector.c AI.c
+SRC= vector.c huffman.c hash_table.c
 
 OBJ= ${SRC:.c=.o} 
-all: Hex
+all: huffman
 
-Hex: ${OBJ} 
+huffman: ${OBJ} 
  
 clean:
 	rm -f ${OBJ}
 	rm -f *.o
-	rm Hex
+	rm huffman

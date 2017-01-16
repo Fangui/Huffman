@@ -20,5 +20,7 @@ struct vector* vector_make(size_t capacity);
 void vector_push(struct vector *vect, struct Tuple *tup);
  
 void freeVect(struct vector *vect);
+
+void printVect(struct vector *vect);
  
 # endif
