@@ -88,6 +88,27 @@ char *encodeData(struct tree *tree, char *data)
   return s;
 }
 
+int toDecimal(char *data)
+{
+  int r = 0;
+  while(*data != '\0')
+  {
+    r *= 2;
+    if(*data == '1')
+      ++r;
+    ++data;
+  }
+  return r;
+}
+
+char *toBinaire(int x)
+{
+  char *data = calloc(1, sizeof(char));
+  size_t i = 0;
+  while(x > 0)
+
+  return data;
+}
 int main()
 {
   struct vector *vect = buildFrequency("bbaabtttaabtctce");
@@ -95,6 +116,5 @@ int main()
   printTree(tree);
   char *data = encodeData(tree, "bbaabtttaabtctce");
   printf("%s\n", data);
- 
   return 0;
 }
