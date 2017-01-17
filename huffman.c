@@ -1,5 +1,7 @@
 # include "huffman.h"
 
+/*=================================COMPRESSION================================*/
+
 struct vector *buildFrequency(char *data)
 {
   struct vector *vect = vector_make(100);
@@ -51,23 +53,39 @@ struct tree *huffmanTree(struct vector *vect)
 
 char *encodeData_rec(struct tree *tree, char c, char *occ, size_t size, size_t capacity)
 {
-  if(!tree->left)
+  if(tree && !tree->left)
   {
     if(tree->key == c)
       return occ;
     return "no code found";
   }
-  if(size <= capacity)
+  if(size + 1 >= capacity)
   {
     capacity *= 2;
     occ = realloc(occ, capacity);
   }
+  occ[size + 1] = '\0';
   occ[size] = '0';
   char *occ_rec = encodeData_rec(tree->left, c, occ, size + 1, capacity);
-  if(occ_rec != "no code found")
+  if( strcmp(occ_rec, "no code found") )
+  {
+    occ = realloc(occ, size + 1);
     return occ_rec;
+  }
   occ[size] = '1';
   return encodeData_rec(tree->right, c, occ, size + 1, capacity);
+}
+
+char *encodeData(struct tree *tree, char *data)
+{
+  char *s = calloc(1 ,sizeof(char)), *occ = NULL;
+  while(*data != '\0')
+  {
+    occ = calloc(2, sizeof(char));
+    s = strcat(s, encodeData_rec(tree, *data, occ, 0, 4));
+    ++data;
+  }
+  return s;
 }
 
 int main()
@@ -75,6 +93,8 @@ int main()
   struct vector *vect = buildFrequency("bbaabtttaabtctce");
   struct tree *tree = huffmanTree(vect);
   printTree(tree);
+  char *data = encodeData(tree, "bbaabtttaabtctce");
+  printf("%s\n", data);
  
   return 0;
 }
