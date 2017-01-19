@@ -4,7 +4,7 @@ CFLAGS= -Wall -Wextra -std=c99 -g -o huffman
 LDFLAGS=
 LDLIBS=
  
-SRC= vector.c huffman.c hash_table.c tree.c
+SRC= hash.c hash_table.c huffman.c tree.c vector.c 
 
 OBJ= ${SRC:.c=.o} 
 all: huffman

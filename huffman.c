@@ -1,4 +1,5 @@
 # include "huffman.h"
+# include "hash.h"
 
 /*=================================COMPRESSION================================*/
 
@@ -53,7 +54,7 @@ struct tree *huffmanTree(struct vector *vect)
 
 char *encodeData_rec(struct tree *tree, char c, char *occ, size_t size, size_t capacity)
 {
-  if(tree && !tree->left)
+  if(!tree->left)
   {
     if(tree->key == c)
       return occ;
@@ -69,7 +70,6 @@ char *encodeData_rec(struct tree *tree, char c, char *occ, size_t size, size_t c
   char *occ_rec = encodeData_rec(tree->left, c, occ, size + 1, capacity);
   if( strcmp(occ_rec, "no code found") )
   {
-    occ = realloc(occ, size + 1);
     return occ_rec;
   }
   occ[size] = '1';
@@ -78,13 +78,33 @@ char *encodeData_rec(struct tree *tree, char c, char *occ, size_t size, size_t c
 
 char *encodeData(struct tree *tree, char *data)
 {
-  char *s = calloc(1 ,sizeof(char)), *occ = NULL;
+  char *s = calloc(30 ,sizeof(char)), *occ = NULL;
+  struct htab *htab = create_htab(8);
+  struct pair_ *pair = NULL;
+  size_t size = 1, len = 0;
+
   while(*data != '\0')
   {
-    occ = calloc(2, sizeof(char));
+    pair = access_htab(htab, *data);
+    if(pair)
+    {
+      occ = calloc(pair->size, sizeof(char));
+      occ = pair->data;
+      len = pair->size;
+    }
+    else
+    {
+      occ = calloc(4, sizeof(char));
+      occ = encodeData_rec(tree, *data, occ, 0, 4);
+      len = strlen(occ);
+      add_htab(htab, *data, occ, len);
+    }
+    size += len;
+    s = realloc(s, size);
     s = strcat(s, encodeData_rec(tree, *data, occ, 0, 4));
     ++data;
   }
+  clear_htab(htab);
   return s;
 }
 
@@ -100,7 +120,7 @@ int toDecimal(char *data)
   }
   return r;
 }
-
+/*
 char *toBinaire(int x)
 {
   char *data = calloc(1, sizeof(char));
@@ -108,7 +128,7 @@ char *toBinaire(int x)
   while(x > 0)
 
   return data;
-}
+}*/
 int main()
 {
   struct vector *vect = buildFrequency("bbaabtttaabtctce");

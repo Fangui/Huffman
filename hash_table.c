@@ -1,6 +1,3 @@
-# include <stdint.h>
-# include <string.h>
-
 # include "hash_table.h"
 
 uint32_t hash(char data)
@@ -132,6 +129,8 @@ void clear_htable(struct htable *htable)
     htable->tab[i] = NULL;
   }
   htable->size = 0;
+  free(htable->tab);
+  free(htable);
 }
 
 
