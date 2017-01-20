@@ -146,16 +146,15 @@ char *encodeTree_rec(struct tree *tree, char *data, size_t size)
 
   if(tree->left)
   {
-    char *cpy = calloc(size + 2, sizeof(char));
+    char *cpy = calloc(50, sizeof(char));
     cpy[0] = '0';
-    cpy = strcat(cpy, data);
     ++size;
     data = strcat(cpy, encodeTree_rec(tree->left, data, size));
+
     while(data[size] != '\0')
-    {
       ++size;
-    }
-    cpy = calloc(size + 1, sizeof(char));
+
+    cpy = calloc(50, sizeof(char));
     cpy = strcpy(cpy, data);
     data = strcat(cpy, encodeTree_rec(tree->right, data + size, size));
     return data;
@@ -170,8 +169,48 @@ char *encodeTree_rec(struct tree *tree, char *data, size_t size)
 
 char *encodeTree(struct tree *tree)
 {
-  char *data = calloc(5000, sizeof(char));
+  char *data = calloc(500, sizeof(char));
   return encodeTree_rec(tree, data, 0);
+}
+
+char *toBinary(char *data)
+{
+  int decimal;
+  size_t i = 0, len = strlen(data), capacity = len / 8 + 2;
+  char *s = NULL, *res = calloc(capacity, sizeof(char)), *str = NULL;
+  while(i + 8 < len)
+  {
+    s = calloc(9, sizeof(char));
+    str = calloc(2, sizeof(char));
+    for(size_t j = 0; j < 8; ++j)
+    {
+      s[j] = data[i];
+      ++i;
+    }
+    decimal = toDecimal(s);
+    str[0] = decimal;
+    res = strcat(res, str); 
+    free(s);
+   }
+
+   size_t cpt = 0;
+   s = calloc(9, sizeof(char));
+   str = calloc(2, sizeof(char));
+   while(i < len)
+   {
+     s[cpt] = data[i];
+     ++cpt;
+     ++i;
+   }
+   for(; cpt < 8; ++cpt)
+     s[cpt] = '0';
+
+   decimal = toDecimal(s);
+   str[0] = decimal;
+   printf("%s\n", s);
+   strcat(res, str);
+   free(s);
+   return res;
 }
 
 int main()
@@ -183,5 +222,8 @@ int main()
   printf("%s\n", data);
   char *dataTree = encodeTree(tree);
   printf("%s\n", dataTree);
+  char *binary = toBinary(data);
+  printf("%s\n", binary);
+  free(data), free(dataTree), free(binary);
   return 0;
 }
