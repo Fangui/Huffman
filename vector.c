@@ -33,7 +33,7 @@ void vector_push(struct vector *vect, struct tree *tree)
   double_vector_size(vect);
 
   size_t i = 0;
-  while(i < vect->size && tree->value <= vect->data[i]->value)
+  while(i < vect->size && tree->value < vect->data[i]->value)
     ++i;
 
   for(size_t j = vect->size; j > i; --j)
