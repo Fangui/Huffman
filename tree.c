@@ -18,3 +18,12 @@ void printTree(struct tree *tree)
   }
 }
 
+void freeTree(struct tree *tree)
+{
+  if(tree)
+  {
+    freeTree(tree->left);
+    freeTree(tree->right);
+    free(tree);
+  }
+}

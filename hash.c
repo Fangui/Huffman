@@ -88,6 +88,7 @@ static void toFree(struct pair_ *pair)
   if(pair)
   {
     toFree(pair->next);
+    free(pair->data);
     free(pair);
   }
 }

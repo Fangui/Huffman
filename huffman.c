@@ -88,7 +88,6 @@ char *encodeData(struct tree *tree, char *data)
     pair = access_htab(htab, *data);
     if(pair)
     {
-      occ = calloc(pair->size, sizeof(char));
       occ = pair->data;
       len = pair->size;
     }
@@ -101,7 +100,7 @@ char *encodeData(struct tree *tree, char *data)
     }
     size += len;
     s = realloc(s, size);
-    s = strcat(s, encodeData_rec(tree, *data, occ, 0, 4));
+    strcat(s, occ);
     ++data;
   }
   clear_htab(htab);
@@ -144,9 +143,10 @@ char *encodeTree_rec(struct tree *tree, char *data, size_t size)
   if(!tree)
     return "";
 
+  char *cpy = NULL;
   if(tree->left)
   {
-    char *cpy = calloc(50, sizeof(char));
+    cpy = calloc(50, sizeof(char));
     cpy[0] = '0';
     ++size;
     data = strcat(cpy, encodeTree_rec(tree->left, data, size));
@@ -161,12 +161,27 @@ char *encodeTree_rec(struct tree *tree, char *data, size_t size)
   }
   else
   {
-    data = strcat(data, "1");
-    data = strcat(data, toBinaire(tree->key));
+    strcat(data, "1");
+    cpy = toBinaire(tree->key);
+    strcat(data, cpy);
+    free(cpy);
     return data;
   }
 }
+/*
+char *encodeTree_rec(struct tree *tree)
+{
+  if(!tree)
+    return "";
+  char *cpy = NULL, *data = NULL;
+  if(tree->left)
+  {
+    data[0] = '0';
+    ++data;
+    data = encodeTree_rec(tree->left);
+  }
 
+}*/
 char *encodeTree(struct tree *tree)
 {
   char *data = calloc(500, sizeof(char));
@@ -189,7 +204,8 @@ char *toBinary(char *data)
     }
     decimal = toDecimal(s);
     str[0] = decimal;
-    res = strcat(res, str); 
+    strcat(res, str);
+    free(str);
     free(s);
    }
 
@@ -207,8 +223,8 @@ char *toBinary(char *data)
 
    decimal = toDecimal(s);
    str[0] = decimal;
-   printf("%s\n", s);
    strcat(res, str);
+   free(str);
    free(s);
    return res;
 }
@@ -224,6 +240,7 @@ int main()
   printf("%s\n", dataTree);
   char *binary = toBinary(data);
   printf("%s\n", binary);
-  free(data), free(dataTree), free(binary);
+  free(data), free(dataTree), free(binary), freeTree(tree);
+  free(vect->data), free(vect);
   return 0;
 }

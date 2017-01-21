@@ -14,4 +14,6 @@ struct tree *newTree();
 
 void printTree(struct tree *tree);
 
+void freeTree(struct tree *tree);
+
 # endif /* _TREE_HTABLE_H */
