@@ -136,56 +136,71 @@ char *toBinaire(int x)
     ++i;
   }
   return data;
-}
-
-char *encodeTree_rec(struct tree *tree, char *data, size_t size)
+}/*
+static char *concat_beg(char c, char* str)
 {
-  if(!tree)
-    return "";
-
-  char *cpy = NULL;
-  if(tree->left)
-  {
-    cpy = calloc(50, sizeof(char));
-    cpy[0] = '0';
-    ++size;
-    data = strcat(cpy, encodeTree_rec(tree->left, data, size));
-
-    while(data[size] != '\0')
-      ++size;
-
-    cpy = calloc(50, sizeof(char));
-    cpy = strcpy(cpy, data);
-    data = strcat(cpy, encodeTree_rec(tree->right, data + size, size));
-    return data;
-  }
-  else
-  {
-    strcat(data, "1");
-    cpy = toBinaire(tree->key);
-    strcat(data, cpy);
-    free(cpy);
-    return data;
-  }
+  size_t size = strlen(str);
+  str = realloc(str, size + 2);
+  for(size_t i = size; i > 0; --i)
+    str[i] = str[i - 1];
+  str[0] = c; 
+  str[size + 1] = '\0';
+  return str;
 }
-/*
+
+static char *concat_str(char *str1, char *str2)
+{
+  size_t size1 = strlen(str1);
+  size_t size2 = strlen(str2);
+  size_t len = size1 + size2;
+  str1 = realloc(str1, len + 1);
+  for(size_t i = 0; i < size2; ++i)
+  {
+    str1[size1] = str2[i];
+    ++size1;
+  }
+  str1[len] = '\0';
+  return str1;
+}*/
+
 char *encodeTree_rec(struct tree *tree)
 {
   if(!tree)
     return "";
-  char *cpy = NULL, *data = NULL;
+  char *s = NULL;
+  char *data = NULL;
   if(tree->left)
   {
-    data[0] = '0';
-    ++data;
+    s = calloc(2, sizeof(char));
+    s[0] = '0';
     data = encodeTree_rec(tree->left);
+    size_t size = strlen(data) + 2;
+    s = realloc(s, size);
+    strcat(s, data);
+    s[size - 1] = '\0';
+    free(data);
+    data = encodeTree_rec(tree->right);
+    size += strlen(data); 
+    s = realloc(s, size);
+    strcat(s, data);
+    free(data);
+    s[size - 1] = '\0';
+    return s;
   }
-
-}*/
+  else
+  {
+    s = calloc(10, sizeof(char));
+    s[0] = '1';
+    data = toBinaire(tree->key);
+    strcat(s, data);
+    free(data);
+    return s;
+  }
+}
 char *encodeTree(struct tree *tree)
 {
-  char *data = calloc(500, sizeof(char));
-  return encodeTree_rec(tree, data, 0);
+//  char *data = calloc(500, sizeof(char));
+  return encodeTree_rec(tree);
 }
 
 char *toBinary(char *data)
