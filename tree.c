@@ -12,7 +12,7 @@ void printTree(struct tree *tree)
 {
   if(tree)
   {
-    printf("key->%c, value->%d\n", tree->key, tree->value);
+    printf("key->%c\n"/* , value->%d\n"*/, tree->key/*, tree->value*/);
     printTree(tree->left);
     printTree(tree->right);
   }

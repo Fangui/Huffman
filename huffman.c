@@ -199,7 +199,6 @@ char *encodeTree_rec(struct tree *tree)
 }
 char *encodeTree(struct tree *tree)
 {
-//  char *data = calloc(500, sizeof(char));
   return encodeTree_rec(tree);
 }
 
@@ -244,6 +243,65 @@ char *toBinary(char *data)
    return res;
 }
 
+/*============================Decompression====================================*/
+
+char *decode(char *data, size_t alignement)
+{
+  char *s = calloc(1, sizeof(char)), *add = NULL;
+  size_t i = 0, size = 1;
+  while(data[i + 1] != '\0')
+  {
+    size += 8;
+    s = realloc(s, size);
+    add = toBinaire(data[i]);
+    strcat(s, add);
+    s[size - 1] = '\0';
+    free(add);
+    ++i;
+  }
+  size += 8;
+  s = realloc(s, size);
+  add = toBinaire(data[i]);
+  strcat(s, add + alignement);
+  s[size - 1] = '\0';
+  free(add);
+  return s;
+}
+
+struct tree *decodeTree_rec(char *data)
+{
+  if(*data != '\0')
+  {
+    struct tree *tree = NULL;
+    if(*data == '0')
+    {
+      tree = newTree();
+      ++data;
+      tree->left = decodeTree_rec(data);
+      tree->right = decodeTree_rec(data);
+    }
+    else
+    {
+      ++data;
+      char *str = calloc(9, sizeof(char));
+      for(size_t i = 0; i < 8; ++i)
+        str[i] = data[i];
+      tree = newTree();
+      tree->key = toDecimal(str);
+      free(str);
+    }
+    return tree;
+  }
+  return NULL;
+}
+
+struct tree *decodeTree(char *data, size_t alignement)
+{
+  char *str = decode(data, alignement);
+  struct tree *tree = decodeTree_rec(str);
+  free(str);
+  return tree;
+}
 int main()
 {
   struct vector *vect = buildFrequency("bbaabtttaabtctce");
@@ -254,8 +312,16 @@ int main()
   char *dataTree = encodeTree(tree);
   printf("%s\n", dataTree);
   char *binary = toBinary(data);
+  char *binaryTree = toBinary(dataTree);
   printf("%s\n", binary);
+  printf("%s\n", binaryTree);
+
+  char *decodeData = decode(binary, 5);
+  printf("%s\n", decodeData);
+  struct tree *huff = decodeTree(binaryTree, 7);
+//  printTree(huff);
   free(data), free(dataTree), free(binary), freeTree(tree);
-  free(vect->data), free(vect);
+  free(vect->data), free(vect), free(binaryTree), freeTree(huff);
+  free(decodeData);
   return 0;
 }
