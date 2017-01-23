@@ -1,6 +1,6 @@
 CC=gcc
 CPPFLAGS=
-CFLAGS= -Wall -Wextra -std=c99 -g -o huffman
+CFLAGS= -Wall -Wextra -std=c99 -O3 -o huffman
 LDFLAGS=
 LDLIBS=
  
