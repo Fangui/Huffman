@@ -3,6 +3,8 @@
 struct tree *newTree()
 {
   struct tree *tree = malloc(sizeof(struct tree));
+  tree->key = ' ';
+  tree->value = 0;
   tree->left = NULL;
   tree->right = NULL;
   return tree;

@@ -2,8 +2,9 @@
 # define _HASH_H_
  
 # include "hash_table.h"
- 
-struct pair_ {
+
+struct pair_
+{
   uint32_t             hkey;
   char                 key;
   char                 *data;

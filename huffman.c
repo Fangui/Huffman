@@ -136,32 +136,7 @@ char *toBinaire(int x)
     ++i;
   }
   return data;
-}/*
-static char *concat_beg(char c, char* str)
-{
-  size_t size = strlen(str);
-  str = realloc(str, size + 2);
-  for(size_t i = size; i > 0; --i)
-    str[i] = str[i - 1];
-  str[0] = c; 
-  str[size + 1] = '\0';
-  return str;
 }
-
-static char *concat_str(char *str1, char *str2)
-{
-  size_t size1 = strlen(str1);
-  size_t size2 = strlen(str2);
-  size_t len = size1 + size2;
-  str1 = realloc(str1, len + 1);
-  for(size_t i = 0; i < size2; ++i)
-  {
-    str1[size1] = str2[i];
-    ++size1;
-  }
-  str1[len] = '\0';
-  return str1;
-}*/
 
 char *encodeTree_rec(struct tree *tree)
 {
@@ -202,7 +177,7 @@ char *encodeTree(struct tree *tree)
   return encodeTree_rec(tree);
 }
 
-char *toBinary(char *data)
+struct Tup *toBinary(char *data)
 {
   int decimal;
   size_t i = 0, len = strlen(data), capacity = len / 8 + 2;
@@ -232,15 +207,18 @@ char *toBinary(char *data)
      ++cpt;
      ++i;
    }
-   for(; cpt < 8; ++cpt)
-     s[cpt] = '0';
+   for(size_t j = cpt; j < 8; ++j)
+     s[j] = '0';
 
    decimal = toDecimal(s);
    str[0] = decimal;
    strcat(res, str);
    free(str);
    free(s);
-   return res;
+   struct Tup *tup = malloc(sizeof(struct Tup));
+   tup->t1 = res;
+   tup->t2 = cpt;
+   return tup;
 }
 
 /*============================Decompression====================================*/
@@ -268,29 +246,43 @@ char *decode(char *data, size_t alignement)
   return s;
 }
 
-struct tree *decodeTree_rec(char *data)
+struct tup *decodeTree_rec(char *data, size_t size)
 {
   if(*data != '\0')
   {
     struct tree *tree = NULL;
-    if(*data == '0')
+    struct tup *tup = NULL;
+
+    if(data[size] == '0')
     {
       tree = newTree();
-      ++data;
-      tree->left = decodeTree_rec(data);
-      tree->right = decodeTree_rec(data);
+      ++size;
+      tup = decodeTree_rec(data, size);
+      tree->left = tup->t1;
+      size = tup->t2;
+      free(tup);
+      tup = decodeTree_rec(data, size);
+      tree->right = tup->t1;
+      size = tup->t2;
+      free(tup);
     }
     else
     {
-      ++data;
+      ++size;
       char *str = calloc(9, sizeof(char));
       for(size_t i = 0; i < 8; ++i)
-        str[i] = data[i];
+      {
+        str[i] = data[size];
+        ++size;
+      }
       tree = newTree();
       tree->key = toDecimal(str);
       free(str);
     }
-    return tree;
+    tup = malloc(sizeof(struct tup));
+    tup->t1 = tree;
+    tup->t2 = size;
+    return tup;
   }
   return NULL;
 }
@@ -298,8 +290,10 @@ struct tree *decodeTree_rec(char *data)
 struct tree *decodeTree(char *data, size_t alignement)
 {
   char *str = decode(data, alignement);
-  struct tree *tree = decodeTree_rec(str);
-  free(str);
+//  struct tup *tup = decodeTree_rec(str, 0);
+  struct tup *tup = decodeTree_rec("0010111010010110001001011000010101100011101100101", 0);
+  struct tree *tree = tup->t1;
+  free(str), free(tup);
   return tree;
 }
 int main()
@@ -311,17 +305,21 @@ int main()
   printf("%s\n", data);
   char *dataTree = encodeTree(tree);
   printf("%s\n", dataTree);
-  char *binary = toBinary(data);
-  char *binaryTree = toBinary(dataTree);
+  struct Tup *tup = toBinary(data);
+  char *binary = tup->t1;
+  size_t align1 = tup->t2;
+  struct Tup *tup2 = toBinary(dataTree);
+  char *binaryTree = tup2->t1;
+  size_t align2 = tup2->t2;
   printf("%s\n", binary);
   printf("%s\n", binaryTree);
 
-  char *decodeData = decode(binary, 5);
+  char *decodeData = decode(binary, align1);
   printf("%s\n", decodeData);
-  struct tree *huff = decodeTree(binaryTree, 7);
-//  printTree(huff);
+  struct tree *huff = decodeTree(binaryTree, align2);
+  printTree(huff);
   free(data), free(dataTree), free(binary), freeTree(tree);
   free(vect->data), free(vect), free(binaryTree), freeTree(huff);
-  free(decodeData);
+  free(tup), free(tup2), free(decodeData);
   return 0;
 }
